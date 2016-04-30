@@ -1,4 +1,6 @@
 #include "CRC.h"
+//CRC16, CRC32
+//Reference: http://create.stephan-brumme.com/crc32/
 
 void CRC_Process(HASH_ctx* ctx, unsigned char* buffer, uint32_t size,Settings* s)
 {

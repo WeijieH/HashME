@@ -2,11 +2,11 @@
 
 
 //================================================================================================
-//SHA1的算法
+//SHA1
+//Reference (Chinese): http://www.cnblogs.com/fullsail/archive/2013/02/22/2921505.html
 
 
 
-//内部函数SHA1算法的上下文的初始化
 static void sha1_init(HASH_ctx *ctx)
 {
 	ctx->length_ = 0;
@@ -31,6 +31,8 @@ void sha1_init_file(HASH_ctx *ctx, uint64_t filesize)
 	ctx->SHA1_hash_[4] = 0xc3d2e1f0;
 }
 
+// SHA1 asm
+// Reference: https://www.nayuki.io/page/fast-sha1-hash-implementation-in-x86-assembly
 #ifdef x86ASM
 void sha1_process_block_x86asm(uint32_t state[5], const uint32_t block[SHA1_BLOCK_SIZE / 4])
 {
@@ -268,25 +270,19 @@ _asm
 #endif
 
 
-/*!
-@brief      内部函数，对一个64bit内存块进行摘要(杂凑)处理
-@param      hash  存放计算hash结果的的数组
-@param      block 要计算的处理得内存块
-*/
+
 static void sha1_process_block(uint32_t hash[5], const uint32_t block[SHA1_BLOCK_SIZE / 4])
 {
 	size_t        t;
 	uint32_t      wblock[80];
 	register uint32_t      a, b, c, d, e, temp;
 
-	//SHA1算法处理的内部数据要求是大头党的，在小头的环境转换
 #if BYTES_ORDER == LITTLE_ENDIAN
 	swap_uint32_memcpy(wblock, block, SHA1_BLOCK_SIZE);
 #else
 	memcpy(wblock, block, SHA1_BLOCK_SIZE);
 #endif
 
-	//处理
 	for (t = 16; t < 80; t++)
 	{
 		wblock[t] = ROTL32(wblock[t - 3] ^ wblock[t - 8] ^ wblock[t - 14] ^ wblock[t - 16], 1);
@@ -349,20 +345,15 @@ static void sha1_process_block(uint32_t hash[5], const uint32_t block[SHA1_BLOCK
 }
 
 
-/*!
-@brief      内部函数，处理数据的前面部分(>64字节的部分)，每次组成一个64字节的block就进行杂凑处理
-@param      ctx  算法的上下文，记录中间数据，结果等
-@param      msg  要进行计算的数据buffer
-@param      size 长度
-*/
+
 static void sha1_update(HASH_ctx *ctx,
 	const unsigned char *buf,
 	size_t size)
 {
-	//为了让zen_sha1_update可以多次进入，长度可以累计
+
 	ctx->length_ += size;
 
-	//每个处理的块都是64字节
+	//64 byte block
 	while (size >= SHA1_BLOCK_SIZE)
 	{
 #ifdef x86ASM
@@ -394,12 +385,7 @@ void sha1_update_file(HASH_ctx *ctx, const unsigned char *buf, size_t bufsize)
 }
 
 
-/*
-@brief      内部函数，处理数据的最后部分，添加0x80,补0，增加长度信息
-@param      ctx    算法的上下文，记录中间数据，结果等
-@param      msg    要进行计算的数据buffer
-@param      result 返回的结果
-*/
+//Same as MD5
 static void sha1_final(HASH_ctx *ctx,
 	const unsigned char *msg,
 	size_t size)
@@ -407,21 +393,20 @@ static void sha1_final(HASH_ctx *ctx,
 
 	uint32_t message[SHA1_BLOCK_SIZE / 4];
 
-	//保存剩余的数据，我们要拼出最后1个（或者两个）要处理的块，前面的算法保证了，最后一个块肯定小于64个字节
+
 	if (ctx->unprocessed_)
 	{
 		memcpy(message, msg + size - ctx->unprocessed_, static_cast<size_t>(ctx->unprocessed_));
 	}
 
-	//得到0x80要添加在的位置（在uint32_t 数组中），
 	uint32_t index = ((uint32_t)ctx->length_ & 63) >> 2;
 	uint32_t shift = ((uint32_t)ctx->length_ & 3) * 8;
 
-	//添加0x80进去，并且把余下的空间补充0
+
 	message[index] &= ~(0xFFFFFFFF << shift);
 	message[index++] ^= 0x80 << shift;
 
-	//如果这个block还无法处理，其后面的长度无法容纳长度64bit，那么先处理这个block
+
 	if (index > 14)
 	{
 		while (index < 16)
@@ -436,16 +421,15 @@ static void sha1_final(HASH_ctx *ctx,
 		index = 0;
 	}
 
-	//补0
+
 	while (index < 14)
 	{
 		message[index++] = 0;
 	}
 
-	//保存长度，注意是bit位的长度,这个问题让我看着郁闷了半天，
+
 	uint64_t data_len = (ctx->length_) << 3;
 
-	//注意SHA1算法要求的64bit的长度是大头BIG-ENDIAN在小头的世界要进行转换
 #if BYTES_ORDER == LITTLE_ENDIAN
 	data_len = SWAP_UINT64(data_len);
 #endif
@@ -458,7 +442,6 @@ static void sha1_final(HASH_ctx *ctx,
 	sha1_process_block(ctx->SHA1_hash_, message);
 #endif
 
-	//注意结果是大头党的在小头的世界要进行转换
 #if BYTES_ORDER == LITTLE_ENDIAN
 	swap_uint32_memcpy(&ctx->SHA1_result, &ctx->SHA1_hash_, SHA1_HASH_SIZE);
 #else
@@ -537,7 +520,7 @@ void sha1_final_file(HASH_ctx *ctx, const unsigned char *buf, size_t bufsize)
 }
 
 
-//计算一个内存数据的SHA1值
+//SHA1 for a memory block
 unsigned char *sha1_MemBlock(const unsigned char *msg,
 	size_t size,
 	HASH_ctx* ctx)

@@ -4,7 +4,7 @@
 
 //================================================================================================
 //MD5
-
+//Reference (Chinese): http://www.cnblogs.com/fullsail/archive/2013/02/22/2921505.html
 
 /*
 @brief      initize MD5 context

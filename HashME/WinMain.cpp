@@ -1,6 +1,6 @@
 #include "Formats.h"
 #include "resource.h"
-#include <TlHelp32.h>
+//#include <TlHelp32.h>
 
 
 // Copy from MSDN  

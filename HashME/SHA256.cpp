@@ -1,5 +1,7 @@
 #include "SHA2.h"
 
+//SHA256
+//Reference: http://www.zedwood.com/article/cpp-sha256-function
 void sha256_init(HASH_ctx *ctx)
 {
 	ctx->length_ = 0;
