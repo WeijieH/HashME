@@ -1,0 +1,13 @@
+1.02
+-Fixed a problem when dragging files to main window, only the last file would be correctly hashed
+-Support MD2, MD4
+-Support SHA2 family - SHA224, SHA256, SHA384 and SHA512
+-Program optimized
+
+1.01
+-Supporting for Chinese language
+-Fixed a problem causing by extremely long file name
+-Fixed a problem that the last digit of SHA1 hash is missing when enabling CRC
+-Fixed CRC16 algorithm
+-Improved stability
+-Removed author information from title bar
