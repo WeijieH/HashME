@@ -1,80 +1,77 @@
 #include "SHA3.h"
 
-void sha512_init(HASH_ctx *ctx)
-{
-	ctx->length_ = 0;
-	ctx->unprocessed_ = 0;
+void sha512_init(HASH_ctx *ctx) {
+  ctx->length_ = 0;
+  ctx->unprocessed_ = 0;
 
-	ctx->SHA512_hash_[0] = 0x6a09e667f3bcc908ULL;
-	ctx->SHA512_hash_[1] = 0xbb67ae8584caa73bULL;
-	ctx->SHA512_hash_[2] = 0x3c6ef372fe94f82bULL;
-	ctx->SHA512_hash_[3] = 0xa54ff53a5f1d36f1ULL;
-	ctx->SHA512_hash_[4] = 0x510e527fade682d1ULL;
-	ctx->SHA512_hash_[5] = 0x9b05688c2b3e6c1fULL;
-	ctx->SHA512_hash_[6] = 0x1f83d9abfb41bd6bULL;
-	ctx->SHA512_hash_[7] = 0x5be0cd19137e2179ULL;
+  ctx->SHA512_hash_[0] = 0x6a09e667f3bcc908ULL;
+  ctx->SHA512_hash_[1] = 0xbb67ae8584caa73bULL;
+  ctx->SHA512_hash_[2] = 0x3c6ef372fe94f82bULL;
+  ctx->SHA512_hash_[3] = 0xa54ff53a5f1d36f1ULL;
+  ctx->SHA512_hash_[4] = 0x510e527fade682d1ULL;
+  ctx->SHA512_hash_[5] = 0x9b05688c2b3e6c1fULL;
+  ctx->SHA512_hash_[6] = 0x1f83d9abfb41bd6bULL;
+  ctx->SHA512_hash_[7] = 0x5be0cd19137e2179ULL;
 }
 
-void sha512_init_file(HASH_ctx *ctx, uint64_t filesize)
-{
-	ctx->SHA512_unprocessed_ = filesize;
+void sha512_init_file(HASH_ctx *ctx, uint64_t filesize) {
+  ctx->SHA512_unprocessed_ = filesize;
 
-	ctx->SHA512_hash_[0] = 0x6a09e667f3bcc908ULL;
-	ctx->SHA512_hash_[1] = 0xbb67ae8584caa73bULL;
-	ctx->SHA512_hash_[2] = 0x3c6ef372fe94f82bULL;
-	ctx->SHA512_hash_[3] = 0xa54ff53a5f1d36f1ULL;
-	ctx->SHA512_hash_[4] = 0x510e527fade682d1ULL;
-	ctx->SHA512_hash_[5] = 0x9b05688c2b3e6c1fULL;
-	ctx->SHA512_hash_[6] = 0x1f83d9abfb41bd6bULL;
-	ctx->SHA512_hash_[7] = 0x5be0cd19137e2179ULL;
+  ctx->SHA512_hash_[0] = 0x6a09e667f3bcc908ULL;
+  ctx->SHA512_hash_[1] = 0xbb67ae8584caa73bULL;
+  ctx->SHA512_hash_[2] = 0x3c6ef372fe94f82bULL;
+  ctx->SHA512_hash_[3] = 0xa54ff53a5f1d36f1ULL;
+  ctx->SHA512_hash_[4] = 0x510e527fade682d1ULL;
+  ctx->SHA512_hash_[5] = 0x9b05688c2b3e6c1fULL;
+  ctx->SHA512_hash_[6] = 0x1f83d9abfb41bd6bULL;
+  ctx->SHA512_hash_[7] = 0x5be0cd19137e2179ULL;
 }
 
-void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SIZE / 8])
-{
-	uint64_t w[80];
-	uint64_t register wv[8];
-	uint64_t register t1, t2;
-	int j;
+void sha512_process_block(uint64_t hash[8],
+                          const uint64_t block[SHA512_BLOCK_SIZE / 8]) {
+  uint64_t w[80];
+  uint64_t register wv[8];
+  uint64_t register t1, t2;
+  int j;
 
-	swap_uint64_memcpy(w, block, SHA512_BLOCK_SIZE);
-	for (j = 16; j < 80; j++) {
-		w[j] = SHA3_F4(w[j - 2]) + w[j - 7] + SHA3_F3(w[j - 15]) + w[j - 16];
-	}
-	for (j = 0; j < 8; j++) {
-		wv[j] = hash[j];
-	}
-	for (j = 0; j < 80; j++) {
-		t1 = wv[7] + SHA3_F2(wv[4]) + SHA3_CH(wv[4], wv[5], wv[6])
-			+ SHA3[j] + w[j];
-		t2 = SHA3_F1(wv[0]) + SHA3_MAJ(wv[0], wv[1], wv[2]);
-		wv[7] = wv[6];
-		wv[6] = wv[5];
-		wv[5] = wv[4];
-		wv[4] = wv[3] + t1;
-		wv[3] = wv[2];
-		wv[2] = wv[1];
-		wv[1] = wv[0];
-		wv[0] = t1 + t2;
-	}
-	for (j = 0; j < 8; j++) {
-		hash[j] += wv[j];
-	}
+  swap_uint64_memcpy(w, block, SHA512_BLOCK_SIZE);
+  for (j = 16; j < 80; j++) {
+    w[j] = SHA3_F4(w[j - 2]) + w[j - 7] + SHA3_F3(w[j - 15]) + w[j - 16];
+  }
+  for (j = 0; j < 8; j++) {
+    wv[j] = hash[j];
+  }
+  for (j = 0; j < 80; j++) {
+    t1 = wv[7] + SHA3_F2(wv[4]) + SHA3_CH(wv[4], wv[5], wv[6]) + SHA3[j] + w[j];
+    t2 = SHA3_F1(wv[0]) + SHA3_MAJ(wv[0], wv[1], wv[2]);
+    wv[7] = wv[6];
+    wv[6] = wv[5];
+    wv[5] = wv[4];
+    wv[4] = wv[3] + t1;
+    wv[3] = wv[2];
+    wv[2] = wv[1];
+    wv[1] = wv[0];
+    wv[0] = t1 + t2;
+  }
+  for (j = 0; j < 8; j++) {
+    hash[j] += wv[j];
+  }
 }
 
-
-//void sha512_process_block_asmx86(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SIZE / 8])
+// void sha512_process_block_asmx86(uint64_t hash[8], const uint64_t
+// block[SHA512_BLOCK_SIZE / 8])
 //{
 //	/*
 //	* Storage usage:
 //	*   Bytes  Location    Description
-//	*       4  eax         Temporary base address of state or block array arguments
-//	*       4  ecx         Old value of esp
-//	*       4  esp         x86 stack pointer
-//	*      64  [esp+ 0]    SHA-512 state variables A,B,C,D,E,F,G,H (8 bytes each)
-//	*     128  [esp+64]    Circular buffer of most recent 16 key schedule items, 8 bytes each
-//	*      56  mm0..mm6    Temporary for calculation per round
-//	*       8  mm7         Control value for byte endian reversal
-//	*      64  xmm0..xmm3  Temporary for copying or calculation
+//	*       4  eax         Temporary base address of state or block array
+//arguments 	*       4  ecx         Old value of esp 	*       4  esp
+//x86 stack pointer 	*      64  [esp+ 0]    SHA-512 state variables
+//A,B,C,D,E,F,G,H (8 bytes each) 	*     128  [esp+64]    Circular buffer
+//of most recent 16 key schedule items, 8 bytes each 	*      56  mm0..mm6
+//Temporary for calculation per round 	*       8  mm7         Control value for
+//byte endian reversal 	*      64  xmm0..xmm3  Temporary for copying or
+//calculation
 //	*/
 //
 //	#define SCHED(i)  qword ptr[((i)&15)*8+64+esp]
@@ -91,34 +88,34 @@ void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SI
 //
 //	#define ROUNDTAIL(i, a, b, c, d, e, f, g, h)  \
 //		{\
-//			/* Part 0 */						\
+//			/* Part 0 */ \
 //			_asm paddq  mm0, STATE(h)			\
 //			_asm movq   mm1, STATE(e)			\
 //			_asm movq   mm2, mm1				\
 //			_asm movq   mm3, mm1				\
-//			RORQ(mm1, 18, mm4)					\
-//			RORQ(mm2, 41, mm5)					\
-//			RORQ(mm3, 14, mm6)					\
+//			RORQ(mm1, 18, mm4) \
+//			RORQ(mm2, 41, mm5) \
+//			RORQ(mm3, 14, mm6) \
 //			_asm pxor   mm1, mm2				\
 //			_asm pxor   mm1, mm3				\
-//			_asm paddq  mm0, qword ptr[SHA3+i*8]			\
+//			_asm paddq  mm0, qword ptr[SHA3+i*8] \
 //			_asm movq   mm2, STATE(g)			\
 //			_asm pxor   mm2, STATE(f)			\
 //			_asm pand   mm2, STATE(e)			\
 //			_asm pxor   mm2, STATE(g)			\
 //			_asm paddq  mm0, mm1				\
 //			_asm paddq  mm0, mm2				\
-//			/* Part 1 */						\
+//			/* Part 1 */ \
 //			_asm movq   mm1, STATE(d)			\
 //			_asm paddq  mm1, mm0				\
 //			_asm movq   STATE(d), mm1			\
-//			/* Part 2 */						\
+//			/* Part 2 */ \
 //			_asm movq   mm1, STATE(a)			\
 //			_asm movq   mm2, mm1				\
 //			_asm movq   mm3, mm1				\
-//			RORQ(mm1, 39, mm4)					\
-//			RORQ(mm2, 34, mm5)					\
-//			RORQ(mm3, 28, mm6)					\
+//			RORQ(mm1, 39, mm4) \
+//			RORQ(mm2, 34, mm5) \
+//			RORQ(mm3, 28, mm6) \
 //			_asm pxor   mm1, mm2				\
 //			_asm pxor   mm1, mm3				\
 //			_asm movq   mm2, STATE(c)			\
@@ -150,7 +147,7 @@ void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SI
 //			_asm movq   mm3, mm1				\
 //			RORQ(mm1, 1, mm5)          			\
 //			RORQ(mm2, 8, mm4)          			\
-//			_asm psrlq  mm3, 7					\
+//			_asm psrlq  mm3, 7 \
 //			_asm pxor   mm2, mm3				\
 //			_asm pxor   mm1, mm2				\
 //			_asm paddq  mm0, mm1				\
@@ -159,7 +156,7 @@ void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SI
 //			_asm movq   mm3, mm1				\
 //			_asm RORQ(mm1, 19, mm5)				\
 //			_asm RORQ(mm2, 61, mm4)				\
-//			_asm psrlq  mm3, 6					\
+//			_asm psrlq  mm3, 6 \
 //			_asm pxor   mm2, mm3				\
 //			_asm pxor   mm1, mm2				\
 //			_asm paddq  mm0, mm1				\
@@ -281,149 +278,126 @@ void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SI
 //	}
 //}
 
-void sha512_update(HASH_ctx *ctx,
-	const unsigned char *buf,
-	uint32_t size)
-{
-	ctx->length_ += size;
+void sha512_update(HASH_ctx *ctx, const unsigned char *buf, uint32_t size) {
+  ctx->length_ += size;
 
-	while (size >= SHA512_BLOCK_SIZE)
-	{
-		sha512_process_block(ctx->SHA512_hash_, reinterpret_cast<const uint64_t *>(buf));
-		buf += SHA512_BLOCK_SIZE;
-		size -= SHA512_BLOCK_SIZE;
-	}
+  while (size >= SHA512_BLOCK_SIZE) {
+    sha512_process_block(ctx->SHA512_hash_,
+                         reinterpret_cast<const uint64_t *>(buf));
+    buf += SHA512_BLOCK_SIZE;
+    size -= SHA512_BLOCK_SIZE;
+  }
 
-	ctx->unprocessed_ = size;
+  ctx->unprocessed_ = size;
 }
 
-void sha512_update_file(HASH_ctx *ctx, const unsigned char *buf, size_t bufsize)
-{
-	size_t i;
-	for (i = 0; i < bufsize; i += SHA512_BLOCK_SIZE)
-	{
-		sha512_process_block(ctx->SHA512_hash_, reinterpret_cast<const uint64_t *>(buf));
-		buf += SHA512_BLOCK_SIZE;
-		ctx->SHA512_unprocessed_ -= SHA512_BLOCK_SIZE;
-	}
-	return;
+void sha512_update_file(HASH_ctx *ctx, const unsigned char *buf,
+                        size_t bufsize) {
+  size_t i;
+  for (i = 0; i < bufsize; i += SHA512_BLOCK_SIZE) {
+    sha512_process_block(ctx->SHA512_hash_,
+                         reinterpret_cast<const uint64_t *>(buf));
+    buf += SHA512_BLOCK_SIZE;
+    ctx->SHA512_unprocessed_ -= SHA512_BLOCK_SIZE;
+  }
+  return;
 }
 
-void sha512_final(HASH_ctx *ctx,
-	const unsigned char *msg,
-	size_t size)
-{
-	uint64_t message[SHA512_BLOCK_SIZE / 8];
+void sha512_final(HASH_ctx *ctx, const unsigned char *msg, size_t size) {
+  uint64_t message[SHA512_BLOCK_SIZE / 8];
 
+  if (ctx->unprocessed_) {
+    memcpy(message, msg + size - ctx->unprocessed_,
+           static_cast<size_t>(ctx->unprocessed_));
+  }
 
-	if (ctx->unprocessed_)
-	{
-		memcpy(message, msg + size - ctx->unprocessed_, static_cast<size_t>(ctx->unprocessed_));
-	}
+  uint32_t index = ((uint64_t)ctx->length_ & 127) >> 3;
+  uint32_t shift = ((uint64_t)ctx->length_ & 7) * 8;
 
+  message[index] &= ~(0xFFFFFFFFFFFFFFFFULL << shift);
+  message[index++] ^= 0x80ULL << shift;
 
-	uint32_t index = ((uint64_t)ctx->length_ & 127) >> 3;
-	uint32_t shift = ((uint64_t)ctx->length_ & 7) * 8;
+  if (index > 14) {
+    while (index < 16) {
+      message[index++] = 0;
+    }
 
+    sha512_process_block(ctx->SHA384_hash_, message);
+    index = 0;
+  }
 
-	message[index] &= ~(0xFFFFFFFFFFFFFFFFULL << shift);
-	message[index++] ^= 0x80ULL << shift;
+  while (index < 14) {
+    message[index++] = 0;
+  }
 
+  // length in bit = length in char * 8
+  uint64_t data_len = (ctx->length_) << 3;
+  data_len = SWAP_UINT64(data_len);
 
-	if (index > 14)
-	{
-		while (index < 16)
-		{
-			message[index++] = 0;
-		}
+  // store the size, only consider data_len < 2^64, so message[14] is always 0
+  message[14] = 0x0ULL;
+  message[15] = data_len;
 
-		sha512_process_block(ctx->SHA384_hash_, message);
-		index = 0;
-	}
+  sha512_process_block(ctx->SHA512_hash_, message);
 
-
-	while (index < 14)
-	{
-		message[index++] = 0;
-	}
-
-	// length in bit = length in char * 8
-	uint64_t data_len = (ctx->length_) << 3;
-	data_len = SWAP_UINT64(data_len);
-
-	// store the size, only consider data_len < 2^64, so message[14] is always 0
-	message[14] = 0x0ULL;
-	message[15] = data_len;
-
-	sha512_process_block(ctx->SHA512_hash_, message);
-
-	swap_uint64_memcpy(&ctx->SHA512_result, &ctx->SHA512_hash_, SHA512_HASH_SIZE);
+  swap_uint64_memcpy(&ctx->SHA512_result, &ctx->SHA512_hash_, SHA512_HASH_SIZE);
 }
 
-void sha512_final_file(HASH_ctx *ctx, const unsigned char *buf, size_t bufsize)
-{
+void sha512_final_file(HASH_ctx *ctx, const unsigned char *buf,
+                       size_t bufsize) {
 
-	while (ctx->SHA512_unprocessed_ >= SHA512_BLOCK_SIZE)
-	{
-		sha512_process_block(ctx->SHA512_hash_, reinterpret_cast<const uint64_t *>(buf));
-		buf += SHA512_BLOCK_SIZE;
-		ctx->SHA512_unprocessed_ -= SHA512_BLOCK_SIZE;
-	}
-	uint64_t message[SHA512_BLOCK_SIZE / 8];
+  while (ctx->SHA512_unprocessed_ >= SHA512_BLOCK_SIZE) {
+    sha512_process_block(ctx->SHA512_hash_,
+                         reinterpret_cast<const uint64_t *>(buf));
+    buf += SHA512_BLOCK_SIZE;
+    ctx->SHA512_unprocessed_ -= SHA512_BLOCK_SIZE;
+  }
+  uint64_t message[SHA512_BLOCK_SIZE / 8];
 
+  if (ctx->SHA512_unprocessed_) {
+    memcpy(message, buf, static_cast<size_t>(ctx->SHA512_unprocessed_));
+  }
 
-	if (ctx->SHA512_unprocessed_)
-	{
-		memcpy(message, buf, static_cast<size_t>(ctx->SHA512_unprocessed_));
-	}
+  // The final SHA3 block size will be 0~127, then devide by 8 (sizeof uint64)
+  // to get index
+  uint32_t index = ((uint64_t)ctx->length_ & 127) >> 3;
+  // shift of uint64 will be ranged from 0 to 7, times 8 to convert the unit to
+  // bit
+  uint32_t shift = ((uint64_t)ctx->length_ & 7) * 8;
 
-	// The final SHA3 block size will be 0~127, then devide by 8 (sizeof uint64) to get index
-	uint32_t index = ((uint64_t)ctx->length_ & 127) >> 3;
-	//shift of uint64 will be ranged from 0 to 7, times 8 to convert the unit to bit
-	uint32_t shift = ((uint64_t)ctx->length_ & 7) * 8;
+  message[index] &= ~(0xFFFFFFFFFFFFFFFFULL << shift);
+  message[index++] ^= 0x80ULL << shift;
 
+  if (index > 14) {
+    while (index < 16) {
+      message[index++] = 0;
+    }
 
-	message[index] &= ~(0xFFFFFFFFFFFFFFFFULL << shift);
-	message[index++] ^= 0x80ULL << shift;
+    sha512_process_block(ctx->SHA512_hash_, message);
+    index = 0;
+  }
 
+  while (index < 14) {
+    message[index++] = 0;
+  }
 
-	if (index > 14)
-	{
-		while (index < 16)
-		{
-			message[index++] = 0;
-		}
+  // length in bit = length in char * 8
+  uint64_t data_len = (ctx->length_) << 3;
+  data_len = SWAP_UINT64(data_len);
 
-		sha512_process_block(ctx->SHA512_hash_, message);
-		index = 0;
-	}
+  // store the size, only consider data_len < 2^64, so message[14] is always 0
+  message[14] = 0x0ULL;
+  message[15] = data_len;
 
+  sha512_process_block(ctx->SHA512_hash_, message);
 
-	while (index < 14)
-	{
-		message[index++] = 0;
-	}
-
-	// length in bit = length in char * 8
-	uint64_t data_len = (ctx->length_) << 3;
-	data_len = SWAP_UINT64(data_len);
-
-	// store the size, only consider data_len < 2^64, so message[14] is always 0
-	message[14] = 0x0ULL;
-	message[15] = data_len;
-
-	sha512_process_block(ctx->SHA512_hash_, message);
-
-	swap_uint64_memcpy(&ctx->SHA512_result, &ctx->SHA512_hash_, SHA512_HASH_SIZE);
-
+  swap_uint64_memcpy(&ctx->SHA512_result, &ctx->SHA512_hash_, SHA512_HASH_SIZE);
 }
 
-unsigned char *sha512_MemBlock(const unsigned char *msg,
-	size_t size,
-	HASH_ctx* ctx)
-{
-	sha512_init(ctx);
-	sha512_update(ctx, msg, size);
-	sha512_final(ctx, msg, size);
-	return ctx->SHA512_result;
+unsigned char *sha512_MemBlock(const unsigned char *msg, size_t size,
+                               HASH_ctx *ctx) {
+  sha512_init(ctx);
+  sha512_update(ctx, msg, size);
+  sha512_final(ctx, msg, size);
+  return ctx->SHA512_result;
 }
