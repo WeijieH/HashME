@@ -366,18 +366,18 @@ void *swap_uint32_memcpy(void *to, const void *from, size_t length)
 	memcpy(to, from, length);
 	size_t remain_len = (4 - (length & 3)) & 3;
 
-	//Êı¾İ²»ÊÇ4×Ö½ÚµÄ±¶Êı,²¹³ä0
+	//æ•°æ®ä¸æ˜¯4å­—èŠ‚çš„å€æ•°,è¡¥å……0
 	if (remain_len)
 	{
 		for (size_t i = 0; i < remain_len; ++i)
 		{
 			*((char *)(to)+length + i) = 0;
 		}
-		//µ÷Õû³É4µÄ±¶Êı
+		//è°ƒæ•´æˆ4çš„å€æ•°
 		length += remain_len;
 	}
 
-	//ËùÓĞµÄÊı¾İ·´×ª
+	//æ‰€æœ‰çš„æ•°æ®åè½¬
 	for (size_t i = 0; i < length / 4; ++i)
 	{
 		((uint32_t *)to)[i] = SWAP_UINT32(((uint32_t *)to)[i]);
@@ -412,16 +412,16 @@ void *swap_uint64_memcpy(void *to, const void *from, size_t length)
 
 
 /*!
-@brief      ÇóÄ³¸öÎÄ¼şµÄHASH
-@return     bool Èç¹ûË³Àû½áÊø,·µ»Øtrue,·ñÔò(ÓÃ»§µã»÷ÁËstop)·µ»Øfalse
-@param[in]  hFile    ÎÄ¼şµÄ¾ä±ú
-@param[in]  FileSize   ÎÄ¼şµÄ³¤¶È
-@param[in]	PGBar ½ø¶ÈÌõ¾ä±ú
-@param[in]	InfoLable ×´Ì¬À¸¾ä±ú
-@param[in_out] pb ½ø¶È±£´æ½á¹¹
+@brief      æ±‚æŸä¸ªæ–‡ä»¶çš„HASH
+@return     bool å¦‚æœé¡ºåˆ©ç»“æŸ,è¿”å›true,å¦åˆ™(ç”¨æˆ·ç‚¹å‡»äº†stop)è¿”å›false
+@param[in]  hFile    æ–‡ä»¶çš„å¥æŸ„
+@param[in]  FileSize   æ–‡ä»¶çš„é•¿åº¦
+@param[in]	PGBar è¿›åº¦æ¡å¥æŸ„
+@param[in]	InfoLable çŠ¶æ€æ å¥æŸ„
+@param[in_out] pb è¿›åº¦ä¿å­˜ç»“æ„
 @param[out] Result stcture
 @param[in] Setting
-@param[in] stp È«¾Öbool±äÁ¿,Ö¸Ê¾stop°´Å¥ÊÇ·ñ±»µã»÷
+@param[in] stp å…¨å±€boolå˜é‡,æŒ‡ç¤ºstopæŒ‰é’®æ˜¯å¦è¢«ç‚¹å‡»
 */
 bool File_Hash(HANDLE hFile, uint64_t FileSize, HWND PGBar, HWND InfoLable, ProgressStrcure* pb, HASH_ctx* ctx, Settings* s, bool* stp)
 {	
