@@ -240,7 +240,7 @@ static void md5_process_block(uint32_t state[4], const uint32_t block[MD5_BLOCK_
         (a) += (b); \
     }
 
-	register unsigned a, b, c, d;
+	unsigned a, b, c, d;
 	a = state[0];
 	b = state[1];
 	c = state[2];

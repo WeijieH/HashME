@@ -275,7 +275,7 @@ static void sha1_process_block(uint32_t hash[5], const uint32_t block[SHA1_BLOCK
 {
 	size_t        t;
 	uint32_t      wblock[80];
-	register uint32_t      a, b, c, d, e, temp;
+	uint32_t      a, b, c, d, e, temp;
 
 #if BYTES_ORDER == LITTLE_ENDIAN
 	swap_uint32_memcpy(wblock, block, SHA1_BLOCK_SIZE);

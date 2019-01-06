@@ -25,7 +25,7 @@ void md4_init_file(HASH_ctx* ctx, uint64_t filesize)
 
 void md4_process_block(uint32_t state[4], const uint32_t block[MD4_BLOCK_SIZE / 4])
 {
-    register unsigned a, b, c, d;
+    unsigned a, b, c, d;
     a = state[0];
     b = state[1];
     c = state[2];

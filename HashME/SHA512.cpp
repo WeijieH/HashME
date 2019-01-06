@@ -32,8 +32,8 @@ void sha512_init_file(HASH_ctx* ctx, uint64_t filesize)
 void sha512_process_block(uint64_t hash[8], const uint64_t block[SHA512_BLOCK_SIZE / 8])
 {
     uint64_t w[80];
-    uint64_t register wv[8];
-    uint64_t register t1, t2;
+    uint64_t wv[8];
+    uint64_t t1, t2;
     int j;
 
     swap_uint64_memcpy(w, block, SHA512_BLOCK_SIZE);

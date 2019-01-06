@@ -31,7 +31,7 @@
 #define Smaller_Than_One_text			L" 小于1毫秒"
 #define Registry__error_text			L"注册表操作失败, 请以管理员运行本程序."
 #else
-#define StartError_text					L"Failed to register window!"
+#define StartError_text					L"Failed to window!"
 #define Clear_botton_caption			L"Clear"
 #define Stop_botton_caption				L"Stop"
 #define Setting_botton_caption			L"Setting"

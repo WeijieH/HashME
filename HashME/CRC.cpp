@@ -6,7 +6,7 @@ void CRC_Process(HASH_ctx* ctx, unsigned char* buffer, uint32_t size, Settings* 
 {
     if (s->CRC16)
     {
-        register uint16_t a = ctx->CRC16_hash_;
+        uint16_t a = ctx->CRC16_hash_;
         for (uint32_t i = 0; i < size; i++)
         {
             a = CRC16_Table[(a ^ buffer[i]) & 0xff] ^ (a >> 8);
@@ -17,7 +17,7 @@ void CRC_Process(HASH_ctx* ctx, unsigned char* buffer, uint32_t size, Settings* 
     {
         uint32_t* current = (uint32_t*)buffer;
         uint32_t length = size;
-        register uint32_t b = ~ctx->CRC32_hash_;
+        uint32_t b = ~ctx->CRC32_hash_;
         while (length >= 8)
         {
             uint32_t one = *current++ ^ b;

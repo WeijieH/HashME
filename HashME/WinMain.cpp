@@ -2,7 +2,7 @@
 #include "resource.h"
 
 // Copy from MSDN
-#pragma comment(linker, \
+//#pragma comment(linker, \
                 "\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -1118,7 +1118,7 @@ int RegWrite(Settings* ST, int para)
     DWORD reShell, reSetting;
     DWORD value;
     DWORD value_length = sizeof(DWORD);
-    TCHAR* MenuText = L"HashME";
+    const TCHAR* MenuText = L"HashME";
     TCHAR* Commandtext = NULL;
     int result = 0;
     int resShell, resSetting;
