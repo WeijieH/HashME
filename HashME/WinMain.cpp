@@ -777,7 +777,7 @@ DWORD WINAPI StartHandelThread(LPVOID wParam)
 //
 void HashME_Mem()
 {
-    dwTimeBegin = GetTickCount();
+    dwTimeBegin = GetTickCount64();
     unsigned char* FormatedTextMemBlock = NULL;
     size_t MemCubeLen = 0;
     TCHAR* szInputText = NULL;
@@ -853,7 +853,7 @@ void HashME_Mem()
     SendMessage(hWndOutText, WM_SETTEXT, NULL,
                 (LPARAM)OUTPUT_TEXT_BUFFER);                // Output to output textbox
     SendMessage(hWndInText, WM_SETTEXT, NULL, (LPARAM)L""); // Clear input box
-    dwTimeEnd = GetTickCount();
+    dwTimeEnd = GetTickCount64();
     FormatInfoLableFinishOutput(OUTPUT_LABLE_BUFFER, (uint32_t)(dwTimeEnd - dwTimeBegin));
     SendMessage(hWndLable, WM_SETTEXT, NULL, (LPARAM)OUTPUT_LABLE_BUFFER);
     OUTPUT_LABLE_BUFFER[0] = NULL;
@@ -865,7 +865,7 @@ void HashME_Mem()
 void HashmeFileProcess(ProgressStrcure* PB, Settings* ST)
 {
     // Set beginning time
-    dwTimeBegin = GetTickCount();
+    dwTimeBegin = GetTickCount64();
     // initialization, disable buttons to avoid user change parameters during
     // processing
     WORKING = true;
@@ -901,7 +901,7 @@ void HashmeFileProcess(ProgressStrcure* PB, Settings* ST)
         CloseHandle(hFile);
     }
     // File process finished
-    dwTimeEnd = GetTickCount();
+    dwTimeEnd = GetTickCount64();
     if (STOP)
     {
         SendMessage(hWndPB, PBM_SETPOS, 0, 0);
